@@ -33,14 +33,18 @@ markerpose = models.MarkerPose(superpoint, ellipsegnet, (320,240), 120, Params)
 markerpose.to(device)
 markerpose.eval()
 
+im = cv2.imread('../markers.jpeg')
+markerpose(im, im)
+
 
 # Set window name and size
-cv2.namedWindow('Pose estimaion', cv2.WINDOW_NORMAL)
-cv2.resizeWindow('Pose estimaion', 1792, 717)
+#cv2.namedWindow('Pose estimaion', cv2.WINDOW_NORMAL)
+#cv2.resizeWindow('Pose estimaion', 1792, 717)
 
 # Read left and right images of the target
-I1 = utils.natsort(glob.glob(os.path.join(root,'images','L','*')))
-I2 = utils.natsort(glob.glob(os.path.join(root,'images','R','*')))
+#I1 = utils.natsort(glob.glob(os.path.join(root,'images','L','*')))
+#I2 = utils.natsort(glob.glob(os.path.join(root,'images','R','*')))
+
 
 
 # Test
@@ -48,6 +52,7 @@ with torch.no_grad():
     for im1n, im2n in zip(I1,I2):
         im1 = cv2.imread(im1n)
         im2 = cv2.imread(im2n)
+        
 
         # Pose estimation
         R, t = markerpose(im1, im2)

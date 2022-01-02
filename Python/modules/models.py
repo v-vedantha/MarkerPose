@@ -105,7 +105,7 @@ class EllipSegNet(torch.nn.Module):
 
 
 class MarkerPose(torch.nn.Module):
-    def __init__(self, superpoint, ellipsegnet, imresize, crop_sz, Params):
+    def __init__(self, superpoint, ellipsegnet, imresize, crop_sz):
         super(MarkerPose, self).__init__()
         self.superpoint = superpoint
         self.ellipsegnet = ellipsegnet
@@ -115,16 +115,6 @@ class MarkerPose(torch.nn.Module):
         self.crop_sz = crop_sz
         self.mid = (crop_sz-1)//2
 
-        # Calibration parameters
-        self.K1 = Params.getNode('K1').mat()
-        self.K2 = Params.getNode('K2').mat()
-        self.dist1 = Params.getNode('dist1').mat()
-        self.dist2 = Params.getNode('dist2').mat()
-
-        # Create projection matrices of camera 1 and camera 2
-        self.P1 = self.K1 @ np.c_[np.eye(3), np.zeros(3)]
-        self.P2 = self.K2 @ np.c_[Params.getNode('R').mat(), Params.getNode('t').mat()]
-    
     def pixelPoints(self, out_det, out_cls):
         scores = utils.labels2scores(out_det)
         scores = utils.simple_nms(scores, 4)
@@ -181,7 +171,7 @@ class MarkerPose(torch.nn.Module):
         centers = utils.ellipseFitting(out)
         c1 = centers[:3] + np.int32(np.round(kp1)) - self.mid
         c2 = centers[3:] + np.int32(np.round(kp2)) - self.mid
-
+        return c1
 
 
         # --------------------------------------------------- Stereo pose estimation
